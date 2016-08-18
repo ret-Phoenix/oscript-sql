@@ -1,4 +1,5 @@
-﻿using ScriptEngine.Machine.Contexts;
+﻿using System.Globalization;
+using ScriptEngine.Machine.Contexts;
 using ScriptEngine.HostedScript.Library.ValueTable;
 using ScriptEngine.Machine;
 using ScriptEngine.HostedScript.Library;
@@ -27,19 +28,7 @@ namespace OScriptSqlite
 
         public QueryResult(SQLiteDataReader reader)
         {
-
             _reader = reader;
-
-            //foreach (DbDataRecord record in reader)
-            //{
-            //    string id = record["id"].ToString();
-            //    id = id.PadLeft(5 - id.Length, ' ');
-            //    string value = record["value"].ToString();
-            //    string result = "\u2502" + id + " \u2502";
-            //    value = value.PadLeft(60, ' ');
-            //    result += value + "\u2502";
-            //    Console.WriteLine(result);
-            //}
         }
 
         // Выгрузить(Unload)
@@ -62,39 +51,49 @@ namespace OScriptSqlite
                 {
                     Console.WriteLine(record.GetValue(ColIdx).ToString());
                     
-                    if (record.GetValue(ColIdx).ToString() == "System.DBNull")
+                    if (record.IsDBNull(ColIdx))
                     {
                         row.Set(ColIdx, ValueFactory.Create());
                         continue;
                     }
 
 
-                    if (record.GetFieldType(ColIdx).ToString() == "System.Int64")
+                    if (record.GetFieldType(ColIdx) == typeof(Int64))
                     {
                         row.Set(ColIdx, ValueFactory.Create(record.GetInt64(ColIdx)) );
                     }
+
+//                    if (record.GetFieldType(ColIdx).ToString() == "System.Int64")
+//                    {
+//                        row.Set(ColIdx, ValueFactory.Create(record.GetInt64(ColIdx)) );
+//                    }
                     if (record.GetFieldType(ColIdx).ToString() == "System.String")
                     {
                         row.Set(ColIdx, ValueFactory.Create(record.GetString(ColIdx)));
                     }
-                    //if (record.GetFieldType(ColIdx).ToString() == "System.Byte[]")
-                    //{
-                    //    row.Set(ColIdx, ValueFactory.Create(Convert.ToBase64CharArray(record.GetValue(ColIdx))));
-                    //}
-                    //if (record.GetFieldType(ColIdx).ToString() == "System.Double")
-                    //{
-                    //    Console.WriteLine("    " + record.GetDouble(ColIdx).ToString());
-                    //    row.Set(ColIdx, ValueFactory.Create(record.GetDouble(ColIdx).ToString()));
-                    //}
+                    if (record.GetFieldType(ColIdx).ToString() == "System.Byte[]")
+                    {
+                    	var data = (byte[])record[ColIdx];
+                    	var newData = new BinaryDataContext(data);
+                    	row.Set(ColIdx, ValueFactory.Create(newData));
+                    }
+                    if (record.GetFieldType(ColIdx).ToString() == "System.Double")
+                    {
+                    	double val = record.GetDouble(ColIdx);
+                    	string newVal = val.ToString();
+                        row.Set(ColIdx, ValueFactory.Create( newVal));
+                    }
                     if (record.GetFieldType(ColIdx).ToString() == "System.Decimal")
                     {
-                        row.Set(ColIdx, ValueFactory.Create(record.GetDecimal(ColIdx)));
+                    	var val = record.GetDecimal(ColIdx);
+                    	string newVal = val.ToString();
+                        row.Set(ColIdx, ValueFactory.Create(newVal));
                     }
 
                 }
 
             }
-
+            _reader.Close();
             return resultTable;
 
         }
