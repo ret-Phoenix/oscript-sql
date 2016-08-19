@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace OScriptSql
 {
+    /// <summary>
+    /// Тип поддерживаемой СУБД
+    /// </summary>
     [ContextClass("ТипСУБД", "DBType")]
     class EnumDBType: AutoContext<EnumDBType>
     {

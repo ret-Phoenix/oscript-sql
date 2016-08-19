@@ -14,17 +14,13 @@ using System.Data.Common;
 
 namespace OScriptSql
 {
+    /// <summary>
+    /// Содержит результат выполнения запроса. Предназначен для хранения и обработки полученных данных.
+    /// </summary>
     [ContextClass("РезультатЗапроса", "QueryResult")]
     class QueryResult : AutoContext<QueryResult>
     {
         private DbDataReader _reader;
-        //List<string> _columns;
-
-        //[ContextProperty("Колонки", "Columns")]
-        //public string Columns
-        //{
-        //    get { return _columns; }
-        //}
 
         public QueryResult()
         {
@@ -36,7 +32,10 @@ namespace OScriptSql
             _reader = reader;
         }
 
-        // Выгрузить(Unload)
+        /// <summary>
+        /// Создает таблицу значений и копирует в нее все записи набора.
+        /// </summary>
+        /// <returns>ТаблицаЗначений</returns>
         [ContextMethod("Выгрузить", "Unload")]
         public ValueTable Unload()
         {
@@ -54,25 +53,16 @@ namespace OScriptSql
 
                 for (int ColIdx = 0; ColIdx < _reader.FieldCount; ColIdx++)
                 {
-                    //Console.WriteLine(record.GetValue(ColIdx).ToString());
-                    Console.WriteLine(record.GetFieldType(ColIdx).ToString());
-                    
                     if (record.IsDBNull(ColIdx))
                     {
                         row.Set(ColIdx, ValueFactory.Create());
                         continue;
                     }
 
-
                     if (record.GetFieldType(ColIdx) == typeof(Int64))
                     {
                         row.Set(ColIdx, ValueFactory.Create(record.GetInt64(ColIdx)) );
                     }
-
-//                    if (record.GetFieldType(ColIdx).ToString() == "System.Int64")
-//                    {
-//                        row.Set(ColIdx, ValueFactory.Create(record.GetInt64(ColIdx)) );
-//                    }
                     if (record.GetFieldType(ColIdx).ToString() == "System.String")
                     {
                         row.Set(ColIdx, ValueFactory.Create(record.GetString(ColIdx)));
@@ -95,13 +85,10 @@ namespace OScriptSql
                     	string newVal = val.ToString();
                         row.Set(ColIdx, ValueFactory.Create(newVal));
                     }
-
                 }
-
             }
             _reader.Close();
             return resultTable;
-
         }
     }
 }

@@ -22,5 +22,6 @@ namespace OScriptSql
         // my methods
         void SetConnection(DBConnector connector);
 
+
     }
 }

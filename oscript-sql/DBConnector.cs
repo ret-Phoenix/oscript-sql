@@ -15,6 +15,9 @@ using System.Data.SQLite;
 
 namespace OScriptSql
 {
+    /// <summary>
+    /// Соединение с БД. Используется для указания источника данных объекта Запрос.
+    /// </summary>
     [ContextClass("Соединение", "Connection")]
     class DBConnector : AutoContext<DBConnector>
     {
@@ -45,6 +48,10 @@ namespace OScriptSql
         }
 
 
+        /// <summary>
+        /// Типы поддерживаемых СУБД
+        /// </summary>
+        /// <value>ТипСУБД</value>
         [ContextProperty("ТипыСУБД", "DBTypes")]
         public IValue DbTypes
         {
@@ -56,6 +63,10 @@ namespace OScriptSql
         }
 
 
+        /// <summary>
+        /// Тип подключенной СУБД
+        /// </summary>
+        /// <value>ТипСУБД</value>
         [ContextProperty("ТипСУБД", "DBType")]
         public int DbType
         {
@@ -70,6 +81,10 @@ namespace OScriptSql
             }
         }
 
+        /// <summary>
+        /// Порт подключения
+        /// </summary>
+        /// <value>Число</value>
         [ContextProperty("Порт", "Port")]
         public int Port
         {
@@ -84,6 +99,10 @@ namespace OScriptSql
             }
         }
 
+        /// <summary>
+        /// Имя или IP сервера
+        /// </summary>
+        /// <value>Строка</value>
         [ContextProperty("Сервер", "Server")]
         public string Server
         {
@@ -98,6 +117,10 @@ namespace OScriptSql
             }
         }
 
+        /// <summary>
+        /// Имя базы, в случае с SQLITE - путь к базе
+        /// </summary>
+        /// <value>Строка</value>
         [ContextProperty("ИмяБазы", "DbName")]
         public string DbName
         {
@@ -112,6 +135,11 @@ namespace OScriptSql
             }
         }
 
+        /// <summary>
+        /// Пользователь под которым происходит подключение.
+        /// Если СУБД MS SQL и пользователь не указан - используется Windows авторизация.
+        /// </summary>
+        /// <value>Строка</value>
         [ContextProperty("ИмяПользователя", "Login")]
         public string Login
         {
@@ -126,6 +154,10 @@ namespace OScriptSql
             }
         }
 
+        /// <summary>
+        /// Пароль пользователя
+        /// </summary>
+        /// <value>Строка</value>
         [ContextProperty("Пароль", "Password")]
         public string Password
         {
@@ -140,6 +172,10 @@ namespace OScriptSql
             }
         }
 
+        /// <summary>
+        /// Статус соединения с БД
+        /// </summary>
+        /// <value>ConnectionState</value>
         [ContextProperty("Открыто", "IsOpen")]
         public ConnectionState IsOpen
         {
@@ -157,6 +193,10 @@ namespace OScriptSql
             }
         }
 
+        /// <summary>
+        /// Подготовленная строка соединения. В случае sqlite аналог ИмяБазы
+        /// </summary>
+        /// <value>Строка</value>
         [ContextProperty("СтрокаСоединения", "ConnectionString")]
         public string ConnectionString
         {
@@ -177,12 +217,21 @@ namespace OScriptSql
             return new DBConnector();
         }
 
+        /// <summary>
+        /// Открыть соединение с БД
+        /// </summary>
+        /// <returns>Булево</returns>
         [ContextMethod("Открыть", "Open")]
         public bool Open()
         {
             if (DbType == (new EnumDBType()).sqlite)
             {
-                _connection = new SQLiteConnection(string.Format("Data Source={0};", DbName));
+                string filePath = DbName;
+                if (filePath == string.Empty )
+                {
+                    filePath = ConnectionString;
+                }
+                _connection = new SQLiteConnection(string.Format("Data Source={0};", filePath));
                 if (System.IO.File.Exists(DbName))
                 {
                     try
@@ -241,10 +290,13 @@ namespace OScriptSql
             return false;
         }
 
+        /// <summary>
+        /// Закрыть соединение с БД
+        /// </summary>
         [ContextMethod("Закрыть", "Close")]
         public void Close()
         {
-
+            _connection.Close();
         }
 
     }

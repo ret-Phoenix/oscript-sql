@@ -14,6 +14,9 @@ using System.Data;
 
 namespace OScriptSql
 {
+    /// <summary>
+    /// Предназначен для выполнения запросов к базе данных.
+    /// </summary>
     [ContextClass("Запрос", "Query")]
     class Query : AutoContext<Query>, IOScriptQuery
     {
@@ -45,6 +48,10 @@ namespace OScriptSql
 
 
 
+        /// <summary>
+        /// Содержит исходный текст выполняемого запроса.
+        /// </summary>
+        /// <value>Строка</value>
         [ContextProperty("Текст", "Text")]
         public string Text
         {
@@ -55,6 +62,10 @@ namespace OScriptSql
             }
         }
 
+        /// <summary>
+        /// Выполняет запрос к базе данных. 
+        /// </summary>
+        /// <returns>РезультатЗапроса</returns>
         [ContextMethod("Выполнить", "Execute")]
         public IValue Execute()
         {
@@ -76,36 +87,36 @@ namespace OScriptSql
             {
                 foreach (IValue prm in _parameters)
                 {
-                    //((SqlCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), ((KeyAndValueImpl)prm).Value);
                     var vl = ((KeyAndValueImpl)prm).Value.ToString();
                     ((SqlCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), vl);
                 }
-                //Console.WriteLine(((SqlCommand)_command).Connection.State);
-                //Console.WriteLine(0);
                 var reader = ((SqlCommand)_command).ExecuteReader();
-
-                //Console.WriteLine(1);
                 result = new QueryResult(reader);
-                //Console.WriteLine(2);
             }
-
             return result;
         }
 
+        /// <summary>
+        /// Устанавливает параметр запроса. Параметры доступны для обращения в тексте запроса. 
+        /// С помощью этого метода можно передавать переменные в запрос, например, для использования в условиях запроса.
+        /// ВАЖНО: В запросе имя параметра указывается с использованием '@'.
+        /// </summary>
+        /// <example>
+        /// Запрос.Текст = "select * from mytable where category_id = @category_id";
+        /// Запрос.УстановитьПараметр("category_id", 1);
+        /// </example>
+        /// <param name="ParametrName">Строка - Имя параметра</param>
+        /// <param name="ParametrValue">Произвольный - Значение параметра</param>
         [ContextMethod("УстановитьПараметр", "SetParameter")]
         public void SetParameter(string ParametrName, IValue ParametrValue)
         {
             _parameters.Insert(ParametrName, ParametrValue);
         }
 
-        //[ContextMethod("УстановитьСоединение", "SetConnection")]
-        //public void SetConnection(string DBPath)
-        //{
-        //    _connection = new SQLiteConnection(string.Format("Data Source={0};", DBPath));
-        //    _connection.Open();
-        //    _command = new SQLiteCommand(_connection);
-        //}
-
+        /// <summary>
+        /// Установка соединения с БД.
+        /// </summary>
+        /// <param name="connector">Соединение - объект соединение с БД</param>
         [ContextMethod("УстановитьСоединение", "SetConnection")]
         public void SetConnection(DBConnector connector)
         {
