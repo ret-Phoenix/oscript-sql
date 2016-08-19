@@ -12,7 +12,7 @@ namespace OScriptSql
     interface IOScriptQuery : IValue
     {
         // props
-        StructureImpl Parameters();
+        StructureImpl Parameters { get; }
         string Text { get; set; }
 
         // methods

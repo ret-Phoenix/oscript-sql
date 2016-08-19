@@ -177,11 +177,11 @@ namespace OScriptSql
         /// </summary>
         /// <value>ConnectionState</value>
         [ContextProperty("Открыто", "IsOpen")]
-        public ConnectionState IsOpen
+        public string IsOpen
         {
             get
             {
-                return Connection.State;
+                return Connection.State.ToString();
             }
         }
 
@@ -248,8 +248,9 @@ namespace OScriptSql
                 }
                 else
                 {
-                    Console.WriteLine("File not found: " + DbName);
-                    return false;
+                    Console.WriteLine("Create db: " + DbName);
+                    _connection.Open();
+                    return true;
                 }
             }
             else if (DbType == (new EnumDBType()).MSSQLServer)
@@ -297,6 +298,9 @@ namespace OScriptSql
         public void Close()
         {
             _connection.Close();
+            _connection.ConnectionString = "";
+            _connection.Dispose();
+            _connection = null;
         }
 
     }

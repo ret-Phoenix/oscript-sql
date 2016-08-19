@@ -40,10 +40,11 @@ namespace OScriptSql
             return new Query();
         }
 
-        // props
-        public StructureImpl Parameters()
+
+        [ContextProperty("Параметры", "Parameters")]
+        public StructureImpl Parameters
         {
-            return _parameters;
+            get { return _parameters; }
         }
 
 
@@ -71,6 +72,7 @@ namespace OScriptSql
         {
             var result = new QueryResult();
 
+            _command.Parameters.Clear();
             _command.CommandText = _text;
             _command.Prepare();
 
@@ -94,6 +96,41 @@ namespace OScriptSql
                 result = new QueryResult(reader);
             }
             return result;
+        }
+
+
+        /// <summary>
+        /// Выполняет запрос на модификацию к базе данных. 
+        /// </summary>
+        /// <returns>Число - Число обработанных строк.</returns>
+        [ContextMethod("ВыполнитьКоманду", "ExecuteCommand")]
+        public int ExecuteCommand()
+        {
+            var result = new QueryResult();
+
+            _command.Parameters.Clear();
+            _command.CommandText = _text;
+            _command.Prepare();
+
+            if (_connector.DbType == (new EnumDBType()).sqlite)
+            {
+                foreach (IValue prm in _parameters)
+                {
+                    ((SQLiteCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), ((KeyAndValueImpl)prm).Value);
+                }
+                return _command.ExecuteNonQuery();
+
+            }
+            else if (_connector.DbType == (new EnumDBType()).MSSQLServer)
+            {
+                foreach (IValue prm in _parameters)
+                {
+                    var vl = ((KeyAndValueImpl)prm).Value.ToString();
+                    ((SqlCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), vl);
+                }
+                return _command.ExecuteNonQuery();
+            }
+            return 0;
         }
 
         /// <summary>
