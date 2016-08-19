@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.Data.Common;
 
-namespace OScriptSqlite
+namespace OScriptSql
 {
     [ContextClass("РезультатЗапроса", "QueryResult")]
     class QueryResult : AutoContext<QueryResult>
     {
-        private SQLiteDataReader _reader;
+        private DbDataReader _reader;
         //List<string> _columns;
 
         //[ContextProperty("Колонки", "Columns")]
@@ -26,7 +26,12 @@ namespace OScriptSqlite
         //    get { return _columns; }
         //}
 
-        public QueryResult(SQLiteDataReader reader)
+        public QueryResult()
+        {
+        }
+
+
+        public QueryResult(DbDataReader reader)
         {
             _reader = reader;
         }
@@ -49,7 +54,8 @@ namespace OScriptSqlite
 
                 for (int ColIdx = 0; ColIdx < _reader.FieldCount; ColIdx++)
                 {
-                    Console.WriteLine(record.GetValue(ColIdx).ToString());
+                    //Console.WriteLine(record.GetValue(ColIdx).ToString());
+                    Console.WriteLine(record.GetFieldType(ColIdx).ToString());
                     
                     if (record.IsDBNull(ColIdx))
                     {

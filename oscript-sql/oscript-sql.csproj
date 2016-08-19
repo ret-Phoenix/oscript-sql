@@ -5,8 +5,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{EA173D06-CCD2-45D5-A263-DC866289517A}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>OScriptSqlite</RootNamespace>
-    <AssemblyName>oscript-sqlite</AssemblyName>
+    <RootNamespace>OScriptSql</RootNamespace>
+    <AssemblyName>sql</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -29,7 +29,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'test|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\..\portable\OneScript\bin\sqlite\</OutputPath>
+    <OutputPath>..\..\..\portable\OneScript\bin\ext\sql\</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -53,6 +53,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DBConnector.cs" />
+    <Compile Include="EnumDBType.cs" />
     <Compile Include="IOScriptQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryResult.cs" />

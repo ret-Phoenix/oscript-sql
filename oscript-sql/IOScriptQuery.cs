@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OScriptSqlite
+namespace OScriptSql
 {
     interface IOScriptQuery : IValue
     {
@@ -20,7 +20,7 @@ namespace OScriptSqlite
         void SetParameter(string ParametrName, IValue ParametrValue);
 
         // my methods
-        void SetConnection(string DBPath);
+        void SetConnection(DBConnector connector);
 
     }
 }
