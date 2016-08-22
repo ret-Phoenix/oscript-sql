@@ -1,1 +1,1 @@
-Integrated Security=SSPI;Initial Catalog=test;Data Source=FIN91\SQLEXPRESS
+Integrated Security=SSPI;Persist Security Info=False;User ID="";Initial Catalog="";Data Source=FIN91\SQLEXPRESS
