@@ -1,0 +1,1 @@
+Integrated Security=SSPI;Initial Catalog=test;Data Source=FIN91\SQLEXPRESS
