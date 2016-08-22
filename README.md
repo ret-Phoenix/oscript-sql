@@ -8,6 +8,8 @@
 
 Реализована возможность выполнения запросов DDL и DML.
 
+Если не подходит сборка sqlite выложенная в release - следует скачать подходящую с официального сайта [sqlite](http://system.data.sqlite.org/index.html/doc/trunk/www/downloads.wiki)
+
 ## Пример
 
     Соединение = Новый Соединение();
