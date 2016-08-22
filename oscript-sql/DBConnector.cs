@@ -303,5 +303,17 @@ namespace OScriptSql
             _connection = null;
         }
 
+        /// <summary>
+        /// Создать запрос с установленным соединением
+        /// </summary>
+        /// <returns>Запрос - Запрос с установленным соединением</returns>
+        [ContextMethod("СоздатьЗапрос", "CreateQuery")]
+        public Query CreateQuery()
+        {
+            var query = new Query();
+            query.SetConnection(this);
+            return query;
+        }
+
     }
 }
