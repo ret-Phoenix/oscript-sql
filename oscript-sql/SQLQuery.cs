@@ -11,6 +11,7 @@ using System.Data.Common;
 using System.Data.Sql;
 using System.Data.SqlClient;
 using System.Data;
+using MySql.Data.MySqlClient;
 
 namespace OScriptSql
 {
@@ -95,6 +96,16 @@ namespace OScriptSql
                 var reader = ((SqlCommand)_command).ExecuteReader();
                 result = new QueryResult(reader);
             }
+            else if (_connector.DbType == (new EnumDBType()).MySQL)
+            {
+                foreach (IValue prm in _parameters)
+                {
+                    var vl = ((KeyAndValueImpl)prm).Value.ToString();
+                    ((MySqlCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), vl);
+                }
+                var reader = ((MySqlCommand)_command).ExecuteReader();
+                result = new QueryResult(reader);
+            }
             return result;
         }
 
@@ -140,6 +151,15 @@ namespace OScriptSql
                 }
                 return _command.ExecuteNonQuery();
             }
+            else if (_connector.DbType == (new EnumDBType()).MySQL)
+            {
+                foreach (IValue prm in _parameters)
+                {
+                    var vl = ((KeyAndValueImpl)prm).Value.ToString();
+                    ((MySqlCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), vl);
+                }
+                return _command.ExecuteNonQuery();
+            }
             return 0;
         }
 
@@ -179,6 +199,12 @@ namespace OScriptSql
                 _command = new SqlCommand();
                 _command.Connection = (SqlConnection)connector.Connection;
             }
+            else if (_connector.DbType == (new EnumDBType()).MySQL)
+            {
+                _command = new MySqlCommand();
+                _command.Connection = (MySqlConnection)connector.Connection;
+            }
+
         }
 
 
