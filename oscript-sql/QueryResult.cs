@@ -58,32 +58,53 @@ namespace OScriptSql
                         row.Set(ColIdx, ValueFactory.Create());
                         continue;
                     }
+                    
+                    //Console.WriteLine("queryresult-col-type:" + record.GetFieldType(ColIdx).ToString() + "::" + record.GetDataTypeName(ColIdx));
 
+                    if (record.GetFieldType(ColIdx) == typeof(Int32))
+                    {
+                        row.Set(ColIdx, ValueFactory.Create((int)record.GetValue(ColIdx)));
+                    }
                     if (record.GetFieldType(ColIdx) == typeof(Int64))
                     {
-                        row.Set(ColIdx, ValueFactory.Create(record.GetInt64(ColIdx)) );
+                        row.Set(ColIdx, ValueFactory.Create(record.GetInt64(ColIdx)));
+                    }
+                    if (record.GetFieldType(ColIdx) == typeof(Boolean))
+                    {
+                        row.Set(ColIdx, ValueFactory.Create(record.GetBoolean(ColIdx)));
+                    }
+                    if (record.GetFieldType(ColIdx) == typeof(UInt64))
+                    {
+                        row.Set(ColIdx, ValueFactory.Create(record.GetValue(ColIdx).ToString()));
+                    }
+
+                    if (record.GetFieldType(ColIdx).ToString() == "System.Double")
+                    {
+                        double val = record.GetDouble(ColIdx);
+                        row.Set(ColIdx, ValueFactory.Create(val.ToString()));
+                    }
+                    if (record.GetFieldType(ColIdx) == typeof(Single))
+                    {
+                        float val = record.GetFloat(ColIdx);
+                        row.Set(ColIdx, ValueFactory.Create(val.ToString()));
+                    }
+                    if (record.GetFieldType(ColIdx) == typeof(Decimal))
+                    {
+                        row.Set(ColIdx, ValueFactory.Create(record.GetDecimal(ColIdx)));
                     }
                     if (record.GetFieldType(ColIdx).ToString() == "System.String")
                     {
                         row.Set(ColIdx, ValueFactory.Create(record.GetString(ColIdx)));
                     }
+                    if (record.GetFieldType(ColIdx).ToString() == "System.DateTime")
+                    {
+                        row.Set(ColIdx, ValueFactory.Create(record.GetDateTime(ColIdx)));
+                    }
                     if (record.GetFieldType(ColIdx).ToString() == "System.Byte[]")
                     {
-                    	var data = (byte[])record[ColIdx];
-                    	var newData = new BinaryDataContext(data);
-                    	row.Set(ColIdx, ValueFactory.Create(newData));
-                    }
-                    if (record.GetFieldType(ColIdx).ToString() == "System.Double")
-                    {
-                    	double val = record.GetDouble(ColIdx);
-                    	string newVal = val.ToString();
-                        row.Set(ColIdx, ValueFactory.Create( newVal));
-                    }
-                    if (record.GetFieldType(ColIdx).ToString() == "System.Decimal")
-                    {
-                    	var val = record.GetDecimal(ColIdx);
-                    	string newVal = val.ToString();
-                        row.Set(ColIdx, ValueFactory.Create(newVal));
+                        var data = (byte[])record[ColIdx];
+                        var newData = new BinaryDataContext(data);
+                        row.Set(ColIdx, ValueFactory.Create(newData));
                     }
                 }
             }

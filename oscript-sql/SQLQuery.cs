@@ -12,6 +12,7 @@ using System.Data.Sql;
 using System.Data.SqlClient;
 using System.Data;
 using MySql.Data.MySqlClient;
+using Npgsql;
 
 namespace OScriptSql
 {
@@ -64,6 +65,45 @@ namespace OScriptSql
             }
         }
 
+        private void setDbCommandParameters()
+        {
+            DbParameter param = null;
+
+            foreach (IValue prm in _parameters)
+            {
+                var paramVal = ((KeyAndValueImpl)prm).Value;
+                var paramKey = ((KeyAndValueImpl)prm).Key.AsString();
+
+                if (paramVal.DataType == DataType.String)
+                {
+                    param = _command.CreateParameter();
+                    param.ParameterName = "@" + paramKey;
+                    param.Value = paramVal.AsString();
+                }
+                else if (paramVal.DataType == DataType.Number)
+                {
+                    param = _command.CreateParameter();
+                    param.ParameterName = "@" + paramKey;
+                    param.Value = paramVal.AsNumber();
+                }
+                else if (paramVal.DataType == DataType.Date)
+                {
+                    param = _command.CreateParameter();
+                    param.ParameterName = "@" + paramKey;
+                    param.Value = paramVal.AsDate();
+                }
+                else if (paramVal.DataType == DataType.Boolean)
+                {
+                    param = _command.CreateParameter();
+                    param.ParameterName = "@" + paramKey;
+                    param.Value = paramVal.AsBoolean();
+                }
+
+                _command.Parameters.Add(param);
+            }
+
+        }
+
         /// <summary>
         /// Выполняет запрос к базе данных. 
         /// </summary>
@@ -72,43 +112,17 @@ namespace OScriptSql
         public IValue Execute()
         {
             var result = new QueryResult();
+            DbDataReader reader = null;
 
             _command.Parameters.Clear();
             _command.CommandText = _text;
-            _command.Prepare();
 
-            if (_connector.DbType == (new EnumDBType()).sqlite)
-            {
-                foreach (IValue prm in _parameters)
-                {
-                    ((SQLiteCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), ((KeyAndValueImpl)prm).Value);
-                }
-                var reader = _command.ExecuteReader();
-                result = new QueryResult(reader);
-            }
-            else if (_connector.DbType == (new EnumDBType()).MSSQLServer)
-            {
-                foreach (IValue prm in _parameters)
-                {
-                    var vl = ((KeyAndValueImpl)prm).Value.ToString();
-                    ((SqlCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), vl);
-                }
-                var reader = ((SqlCommand)_command).ExecuteReader();
-                result = new QueryResult(reader);
-            }
-            else if (_connector.DbType == (new EnumDBType()).MySQL)
-            {
-                foreach (IValue prm in _parameters)
-                {
-                    var vl = ((KeyAndValueImpl)prm).Value.ToString();
-                    ((MySqlCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), vl);
-                }
-                var reader = ((MySqlCommand)_command).ExecuteReader();
-                result = new QueryResult(reader);
-            }
+            setDbCommandParameters();
+            reader = _command.ExecuteReader();
+
+            result = new QueryResult(reader);
             return result;
         }
-
 
         /// <summary>
         /// Выполняет запрос на модификацию к базе данных. 
@@ -131,36 +145,8 @@ namespace OScriptSql
 
             _command.Parameters.Clear();
             _command.CommandText = _text;
-            _command.Prepare();
-
-            if (_connector.DbType == (new EnumDBType()).sqlite)
-            {
-                foreach (IValue prm in _parameters)
-                {
-                    ((SQLiteCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), ((KeyAndValueImpl)prm).Value);
-                }
-                return _command.ExecuteNonQuery();
-
-            }
-            else if (_connector.DbType == (new EnumDBType()).MSSQLServer)
-            {
-                foreach (IValue prm in _parameters)
-                {
-                    var vl = ((KeyAndValueImpl)prm).Value.ToString();
-                    ((SqlCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), vl);
-                }
-                return _command.ExecuteNonQuery();
-            }
-            else if (_connector.DbType == (new EnumDBType()).MySQL)
-            {
-                foreach (IValue prm in _parameters)
-                {
-                    var vl = ((KeyAndValueImpl)prm).Value.ToString();
-                    ((MySqlCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), vl);
-                }
-                return _command.ExecuteNonQuery();
-            }
-            return 0;
+            setDbCommandParameters();
+            return _command.ExecuteNonQuery();
         }
 
         /// <summary>
@@ -203,6 +189,11 @@ namespace OScriptSql
             {
                 _command = new MySqlCommand();
                 _command.Connection = (MySqlConnection)connector.Connection;
+            }
+            else if (_connector.DbType == (new EnumDBType()).PostgreSQL)
+            {
+                _command = new NpgsqlCommand();
+                _command.Connection = (NpgsqlConnection)connector.Connection;
             }
 
         }

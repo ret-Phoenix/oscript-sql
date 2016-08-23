@@ -31,5 +31,11 @@ namespace OScriptSql
             get { return 2; }
         }
 
+        [ContextProperty("PostgreSQL", "PostgreSQL")]
+        public int PostgreSQL
+        {
+            get { return 3; }
+        }
+
     }
 }
