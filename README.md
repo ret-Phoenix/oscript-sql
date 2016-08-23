@@ -1,8 +1,8 @@
 # Работа с SQL базами для 1script
 
-Поддерживаются базы: sqlite, MS SQL Server, MySQL
-
 Внешняя компонента реализующая возможность работы с базами данных из onescript.
+
+Поддерживаются базы: sqlite, MS SQL Server, MySQL
 
 Для коннектора sqlite позволяет работать с базой im memory.
 
