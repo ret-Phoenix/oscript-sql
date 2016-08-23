@@ -12,6 +12,7 @@ using System.Data.Sql;
 using System.Data.SqlClient;
 using System.Data;
 using MySql.Data.MySqlClient;
+using Npgsql;
 
 namespace OScriptSql
 {
@@ -72,6 +73,7 @@ namespace OScriptSql
         public IValue Execute()
         {
             var result = new QueryResult();
+            DbDataReader reader = null;
 
             _command.Parameters.Clear();
             _command.CommandText = _text;
@@ -83,32 +85,90 @@ namespace OScriptSql
                 {
                     ((SQLiteCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), ((KeyAndValueImpl)prm).Value);
                 }
-                var reader = _command.ExecuteReader();
-                result = new QueryResult(reader);
+                reader = _command.ExecuteReader();
             }
             else if (_connector.DbType == (new EnumDBType()).MSSQLServer)
             {
                 foreach (IValue prm in _parameters)
                 {
-                    var vl = ((KeyAndValueImpl)prm).Value.ToString();
-                    ((SqlCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), vl);
+                    var paramVal = ((KeyAndValueImpl)prm).Value;
+                    var paremKey = ((KeyAndValueImpl)prm).Key.AsString();
+
+                    if (paramVal.DataType == DataType.String)
+                    {
+                        ((SqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsString());
+                    }
+                    else if (paramVal.DataType == DataType.Number)
+                    {
+                        ((SqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsNumber());
+                    }
+                    else if (paramVal.DataType == DataType.Date)
+                    {
+                        ((SqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsDate());
+                    }
+                    else if (paramVal.DataType == DataType.Boolean)
+                    {
+                        ((SqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsBoolean());
+                    }
                 }
-                var reader = ((SqlCommand)_command).ExecuteReader();
-                result = new QueryResult(reader);
+                reader = ((SqlCommand)_command).ExecuteReader();
             }
             else if (_connector.DbType == (new EnumDBType()).MySQL)
             {
                 foreach (IValue prm in _parameters)
                 {
-                    var vl = ((KeyAndValueImpl)prm).Value.ToString();
-                    ((MySqlCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), vl);
+                    var paramVal = ((KeyAndValueImpl)prm).Value;
+                    var paremKey = ((KeyAndValueImpl)prm).Key.AsString();
+
+                    if (paramVal.DataType == DataType.String)
+                    {
+                        ((MySqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsString());
+                    }
+                    else if (paramVal.DataType == DataType.Number)
+                    {
+                        ((MySqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsNumber());
+                    }
+                    else if (paramVal.DataType == DataType.Date)
+                    {
+                        ((MySqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsDate());
+                    }
+                    else if (paramVal.DataType == DataType.Boolean)
+                    {
+                        ((MySqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsBoolean());
+                    }
                 }
-                var reader = ((MySqlCommand)_command).ExecuteReader();
-                result = new QueryResult(reader);
+                reader = ((MySqlCommand)_command).ExecuteReader();
             }
+            else if (_connector.DbType == (new EnumDBType()).PostgreSQL)
+            {
+                foreach (IValue prm in _parameters)
+                {
+                    var paramVal = ((KeyAndValueImpl)prm).Value;
+                    var paremKey = ((KeyAndValueImpl)prm).Key.AsString();
+
+                    if (paramVal.DataType == DataType.String)
+                    {
+                        ((NpgsqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsString());
+                    }
+                    else if (paramVal.DataType == DataType.Number)
+                    {
+                        ((NpgsqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsNumber());
+                    }
+                    else if (paramVal.DataType == DataType.Date)
+                    {
+                        ((NpgsqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsDate());
+                    }
+                    else if (paramVal.DataType == DataType.Boolean)
+                    {
+                        ((NpgsqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsBoolean());
+                    }
+                }
+                reader = ((NpgsqlCommand)_command).ExecuteReader();
+                
+            }
+            result = new QueryResult(reader);
             return result;
         }
-
 
         /// <summary>
         /// Выполняет запрос на модификацию к базе данных. 
@@ -131,7 +191,7 @@ namespace OScriptSql
 
             _command.Parameters.Clear();
             _command.CommandText = _text;
-            _command.Prepare();
+            //_command.Prepare();
 
             if (_connector.DbType == (new EnumDBType()).sqlite)
             {
@@ -146,8 +206,29 @@ namespace OScriptSql
             {
                 foreach (IValue prm in _parameters)
                 {
-                    var vl = ((KeyAndValueImpl)prm).Value.ToString();
-                    ((SqlCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), vl);
+                    var paramVal = ((KeyAndValueImpl)prm).Value;
+                    var paremKey = ((KeyAndValueImpl)prm).Key.AsString();
+
+                    if (paramVal.DataType == DataType.String)
+                    {
+                        ((SqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsString());
+                    }
+                    else if (paramVal.DataType == DataType.Number)
+                    {
+                        ((SqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsNumber());
+                    }
+                    else if (paramVal.DataType == DataType.Date)
+                    {
+                        ((SqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsDate());
+                    }
+                    else if (paramVal.DataType == DataType.Boolean)
+                    {
+                        ((SqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsBoolean());
+                    }
+                    //else if (paramVal.DataType == DataType.Object)
+                    //{
+                    //    cmd1.Parameters.AddWithValue(paremKey, paramVal.AsObject());
+                    //}
                 }
                 return _command.ExecuteNonQuery();
             }
@@ -155,8 +236,59 @@ namespace OScriptSql
             {
                 foreach (IValue prm in _parameters)
                 {
-                    var vl = ((KeyAndValueImpl)prm).Value.ToString();
-                    ((MySqlCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), vl);
+                    //var vl = ((KeyAndValueImpl)prm).Value;
+                    //((MySqlCommand)_command).Parameters.AddWithValue("@" + ((KeyAndValueImpl)prm).Key.ToString(), vl);
+                    var paramVal = ((KeyAndValueImpl)prm).Value;
+                    var paremKey = ((KeyAndValueImpl)prm).Key.AsString();
+
+                    if (paramVal.DataType == DataType.String)
+                    {
+                        ((MySqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsString());
+                    }
+                    else if (paramVal.DataType == DataType.Number)
+                    {
+                        ((MySqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsNumber());
+                    }
+                    else if (paramVal.DataType == DataType.Date)
+                    {
+                        ((MySqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsDate());
+                    }
+                    else if (paramVal.DataType == DataType.Boolean)
+                    {
+                        ((MySqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsBoolean());
+                    }
+
+                }
+                return _command.ExecuteNonQuery();
+            }
+            else if (_connector.DbType == (new EnumDBType()).PostgreSQL)
+            {
+                foreach (IValue prm in _parameters)
+                {
+                    var paramVal = ((KeyAndValueImpl)prm).Value;
+                    var paremKey = ((KeyAndValueImpl)prm).Key.AsString();
+
+                    if (paramVal.DataType == DataType.String)
+                    {
+                        ((NpgsqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsString());
+                    }
+                    else if (paramVal.DataType == DataType.Number)
+                    {
+                        ((NpgsqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsNumber());
+                    }
+                    else if (paramVal.DataType == DataType.Date)
+                    {
+                        ((NpgsqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsDate());
+                    }
+                    else if (paramVal.DataType == DataType.Boolean)
+                    {
+                        ((NpgsqlCommand)_command).Parameters.AddWithValue(paremKey, paramVal.AsBoolean());
+                    }
+                    //else if (paramVal.DataType == DataType.Object)
+                    //{
+                    //    cmd1.Parameters.AddWithValue(paremKey, paramVal.AsObject());
+                    //}
+
                 }
                 return _command.ExecuteNonQuery();
             }
@@ -203,6 +335,11 @@ namespace OScriptSql
             {
                 _command = new MySqlCommand();
                 _command.Connection = (MySqlConnection)connector.Connection;
+            }
+            else if (_connector.DbType == (new EnumDBType()).PostgreSQL)
+            {
+                _command = new NpgsqlCommand();
+                _command.Connection = (NpgsqlConnection)connector.Connection;
             }
 
         }

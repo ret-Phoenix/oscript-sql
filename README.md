@@ -2,7 +2,7 @@
 
 Внешняя компонента реализующая возможность работы с базами данных из onescript.
 
-Поддерживаются базы: sqlite, MS SQL Server, MySQL
+Поддерживаются базы: sqlite, MS SQL Server, MySQL, PostgreSQL
 
 Для коннектора sqlite позволяет работать с базой im memory.
 

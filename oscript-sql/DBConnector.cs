@@ -13,6 +13,7 @@ using System.Data.Common;
 using System.Data;
 using System.Data.SQLite;
 using MySql.Data.MySqlClient;
+using Npgsql;
 
 namespace OScriptSql
 {
@@ -295,22 +296,30 @@ namespace OScriptSql
             }
             else if (DbType == (new EnumDBType()).MySQL)
             {
-                if (ConnectionString != String.Empty)
+                if (ConnectionString == String.Empty)
                 {
-                    _connection = new MySqlConnection(_connectionString);
-                }
-                else
-                {
-                    //server=localhost;user=root;database=TestDB;port=3306;password=******;
                     _connectionString = "";
                     _connectionString += "server=" + _server + ";";
                     _connectionString += "user=" + _login + ";";
                     _connectionString += (_password != String.Empty ? "password=" + _password + ";" : "");
                     _connectionString += (_dbName != String.Empty ? "database=" + _dbName + ";" : "");
                     _connectionString += (_port != 0 ? "port=" + _port.ToString() + ";" : "");
-
                 }
                 _connection = new MySqlConnection(_connectionString);
+                _connection.Open();
+            }
+            else if (DbType == (new EnumDBType()).PostgreSQL)
+            {
+                if (ConnectionString == String.Empty)
+                {
+                    _connectionString = "";
+                    _connectionString += "Host=" + _server + ";";
+                    _connectionString += "Username=" + _login + ";";
+                    _connectionString += (_password != String.Empty ? "Password=" + _password + ";" : "");
+                    _connectionString += (_dbName != String.Empty ? "Database=" + _dbName + ";" : "");
+                    _connectionString += (_port != 0 ? "port=" + _port.ToString() + ";" : "");
+                }
+                _connection = new NpgsqlConnection(_connectionString);
                 _connection.Open();
             }
             return false;
