@@ -1,4 +1,6 @@
-﻿# Работа с БД sqlite и MS SQL Server для 1script
+# Работа с SQL базами для 1script
+
+Поддерживаются базы: БД sqlite, MS SQL Server, MySQL
 
 Внешняя компонента реализующая возможность работы с базами данных из onescript.
 
