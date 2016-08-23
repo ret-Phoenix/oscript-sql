@@ -25,5 +25,11 @@ namespace OScriptSql
             get { return 1; }
         }
 
+        [ContextProperty("MySQL", "MySQL")]
+        public int MySQL
+        {
+            get { return 2; }
+        }
+
     }
 }

@@ -12,6 +12,7 @@ using System.Data.SqlClient;
 using System.Data.Common;
 using System.Data;
 using System.Data.SQLite;
+using MySql.Data.MySqlClient;
 
 namespace OScriptSql
 {
@@ -231,6 +232,10 @@ namespace OScriptSql
                 {
                     filePath = ConnectionString;
                 }
+                else
+                {
+                    ConnectionString = filePath;
+                }
                 _connection = new SQLiteConnection(string.Format("Data Source={0};", filePath));
                 if (System.IO.File.Exists(DbName))
                 {
@@ -263,29 +268,49 @@ namespace OScriptSql
                 }
                 else
                 {
-                    string connStr = @"Data Source=" + Server;
+                    _connectionString = @"Data Source=" + Server;
                     if (Port != 0)
                     {
-                        connStr += "," + Port.ToString();
+                        _connectionString += "," + Port.ToString();
                     }
-                    connStr += "; Initial Catalog= " + DbName + ";";
+                    _connectionString += "; Initial Catalog= " + DbName + ";";
 
                     if (Login != String.Empty)
                     {
-                        connStr += "User ID = " + Login +";";
+                        _connectionString += "User ID = " + Login +";";
                         if (Password != String.Empty)
                         {
-                            connStr += "Password = " + Password + ";";
+                            _connectionString += "Password = " + Password + ";";
                         }
                     }
                     else
                     {
-                        connStr += "Integrated Security=True";
+                        _connectionString += "Integrated Security=True";
                     }
                     
-                    _connection.ConnectionString = connStr;
+                    _connection.ConnectionString = _connectionString;
                 }
 
+                _connection.Open();
+            }
+            else if (DbType == (new EnumDBType()).MySQL)
+            {
+                if (ConnectionString != String.Empty)
+                {
+                    _connection = new MySqlConnection(_connectionString);
+                }
+                else
+                {
+                    //server=localhost;user=root;database=TestDB;port=3306;password=******;
+                    _connectionString = "";
+                    _connectionString += "server=" + _server + ";";
+                    _connectionString += "user=" + _login + ";";
+                    _connectionString += (_password != String.Empty ? "password=" + _password + ";" : "");
+                    _connectionString += (_dbName != String.Empty ? "database=" + _dbName + ";" : "");
+                    _connectionString += (_port != 0 ? "port=" + _port.ToString() + ";" : "");
+
+                }
+                _connection = new MySqlConnection(_connectionString);
                 _connection.Open();
             }
             return false;
