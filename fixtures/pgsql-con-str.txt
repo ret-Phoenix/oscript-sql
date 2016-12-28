@@ -1,1 +1,1 @@
-Host=localhost;Username=testuser;Password=123;Database=test;Port=5432
+Host=localhost;Username=testuser;Password=testuser;Database=test;Port=5432
