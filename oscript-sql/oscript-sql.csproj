@@ -58,16 +58,20 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\portable\OneScript\bin\ext\sql\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Npgsql, Version=3.1.7.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Npgsql.3.1.7\lib\net45\Npgsql.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ScriptEngine, Version=1.0.14.195, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\OneScript.1.0.14\lib\net40\ScriptEngine.dll</HintPath>
+    <Reference Include="Npgsql, Version=3.1.9.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.3.1.9\lib\net45\Npgsql.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ScriptEngine.HostedScript, Version=1.0.14.195, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\OneScript.StandardLibrary.1.0.14\lib\net40\ScriptEngine.HostedScript.dll</HintPath>
+    <Reference Include="ScriptEngine, Version=1.0.15.260, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OneScript.1.0.15\lib\net40\ScriptEngine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ScriptEngine.HostedScript, Version=1.0.15.260, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OneScript.StandardLibrary.1.0.15\lib\net40\ScriptEngine.HostedScript.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
