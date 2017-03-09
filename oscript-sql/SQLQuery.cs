@@ -50,6 +50,19 @@ namespace OScriptSql
         }
 
 
+        /// <summary>
+        /// Управление таймауотом
+        /// </summary>
+        /// <value>Число</value>
+        [ContextProperty("Таймаут", "Timeout")]
+        public int Timeout
+        {
+            get { return _command.CommandTimeout; }
+            set
+            {
+                _command.CommandTimeout = value;
+            }
+        }
 
         /// <summary>
         /// Содержит исходный текст выполняемого запроса.
