@@ -240,16 +240,7 @@ namespace OScriptSql
                 _connection = new SQLiteConnection(string.Format("Data Source={0};", filePath));
                 if (System.IO.File.Exists(DbName))
                 {
-                    try
-                    {
-                        _connection.Open();
-                        return true;
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                        return false;
-                    }
+                    return OpenConnection();
 
                 }
                 else
@@ -292,7 +283,7 @@ namespace OScriptSql
                     _connection.ConnectionString = _connectionString;
                 }
 
-                _connection.Open();
+                return OpenConnection();
             }
             else if (DbType == (new EnumDBType()).MySQL)
             {
@@ -306,7 +297,7 @@ namespace OScriptSql
                     _connectionString += (_port != 0 ? "port=" + _port.ToString() + ";" : "");
                 }
                 _connection = new MySqlConnection(_connectionString);
-                _connection.Open();
+                return OpenConnection();
             }
             else if (DbType == (new EnumDBType()).PostgreSQL)
             {
@@ -320,9 +311,23 @@ namespace OScriptSql
                     _connectionString += (_port != 0 ? "port=" + _port.ToString() + ";" : "");
                 }
                 _connection = new NpgsqlConnection(_connectionString);
-                _connection.Open();
+                return OpenConnection();
             }
             return false;
+        }
+
+        private bool OpenConnection()
+        {
+            try
+            {
+                _connection.Open();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
         }
 
         /// <summary>
