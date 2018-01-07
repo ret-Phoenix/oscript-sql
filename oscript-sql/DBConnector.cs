@@ -228,26 +228,14 @@ namespace OScriptSql
         {
             if (DbType == (new EnumDBType()).sqlite)
             {
-                string filePath = DbName;
-                if (filePath == string.Empty )
+                if (DbType == (new EnumDBType()).sqlite)
                 {
-                    filePath = ConnectionString;
-                }
-                else
-                {
-                    ConnectionString = filePath;
-                }
-                _connection = new SQLiteConnection(string.Format("Data Source={0};", filePath));
-                if (System.IO.File.Exists(DbName))
-                {
-                    return OpenConnection();
+                    if (ConnectionString == string.Empty && DbName != string.Empty)
+                        ConnectionString = string.Format("Data Source={0};", DbName);
 
-                }
-                else
-                {
-                    Console.WriteLine("Create db: " + DbName);
-                    _connection.Open();
-                    return true;
+                    _connection = new SQLiteConnection(ConnectionString);
+
+                    return OpenConnection();
                 }
             }
             else if (DbType == (new EnumDBType()).MSSQLServer)
