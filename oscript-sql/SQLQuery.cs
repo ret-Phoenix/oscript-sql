@@ -74,7 +74,7 @@ namespace OScriptSql
             get { return _text; }
             set
             {
-                _text = value;
+                _text = value; 
             }
         }
 
