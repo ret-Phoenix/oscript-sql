@@ -20,7 +20,7 @@ namespace OScriptSql
     /// Предназначен для выполнения запросов к базе данных.
     /// </summary>
     [ContextClass("Запрос", "Query")]
-    class Query : AutoContext<Query>, IOScriptQuery
+    public class Query : AutoContext<Query>, IOScriptQuery
     {
 
         private string _text;

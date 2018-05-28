@@ -19,7 +19,7 @@ namespace OScriptSql
     /// Содержит результат выполнения запроса. Предназначен для хранения и обработки полученных данных.
     /// </summary>
     [ContextClass("РезультатЗапроса", "QueryResult")]
-    class QueryResult : AutoContext<QueryResult>
+    public class QueryResult : AutoContext<QueryResult>
     {
         private DbDataReader _reader;
 
