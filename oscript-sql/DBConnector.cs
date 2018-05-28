@@ -303,16 +303,8 @@ namespace OScriptSql
 
         private bool OpenConnection()
         {
-            try
-            {
-                _connection.Open();
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return false;
-            }
+            _connection.Open();
+            return true;
         }
 
         /// <summary>
