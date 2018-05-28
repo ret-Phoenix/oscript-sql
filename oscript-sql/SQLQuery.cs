@@ -20,7 +20,7 @@ namespace OScriptSql
     /// Предназначен для выполнения запросов к базе данных.
     /// </summary>
     [ContextClass("Запрос", "Query")]
-    class Query : AutoContext<Query>, IOScriptQuery
+    public class Query : AutoContext<Query>, IOScriptQuery
     {
 
         private string _text;
@@ -74,7 +74,7 @@ namespace OScriptSql
             get { return _text; }
             set
             {
-                _text = value;
+                _text = value; 
             }
         }
 
@@ -137,6 +137,11 @@ namespace OScriptSql
             return result;
         }
 
+        [ContextMethod("ВыполнитьЗапрос", "ExecuteQuery")]
+        public IValue ExecuteQuery()
+        {
+            return Execute();
+        }
         /// <summary>
         /// Выполняет запрос на модификацию к базе данных. 
         /// </summary>

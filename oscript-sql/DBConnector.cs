@@ -21,7 +21,7 @@ namespace OScriptSql
     /// Соединение с БД. Используется для указания источника данных объекта Запрос.
     /// </summary>
     [ContextClass("Соединение", "Connection")]
-    class DBConnector : AutoContext<DBConnector>
+    public class DBConnector : AutoContext<DBConnector>
     {
         private int _dbType;
         private int _port;
@@ -303,16 +303,8 @@ namespace OScriptSql
 
         private bool OpenConnection()
         {
-            try
-            {
-                _connection.Open();
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return false;
-            }
+            _connection.Open();
+            return true;
         }
 
         /// <summary>
