@@ -11,7 +11,7 @@ namespace OScriptSql
     /// Тип поддерживаемой СУБД
     /// </summary>
     [ContextClass("ТипСУБД", "DBType")]
-    class EnumDBType: AutoContext<EnumDBType>
+    public class EnumDBType : AutoContext<EnumDBType>
     {
         [ContextProperty("sqlite", "sqlite")]
         public int sqlite
