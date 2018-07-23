@@ -21,7 +21,7 @@ namespace OScriptSql
     /// Соединение с БД. Используется для указания источника данных объекта Запрос.
     /// </summary>
     [ContextClass("Соединение", "Connection")]
-    class DBConnector : AutoContext<DBConnector>
+    public class DBConnector : AutoContext<DBConnector>
     {
         private int _dbType;
         private int _port;
@@ -31,6 +31,7 @@ namespace OScriptSql
         private string _password;
         private DbConnection _connection;
         private string _connectionString;
+        private string _lastErrorMessage;
 
         public DBConnector()
         {
@@ -41,7 +42,9 @@ namespace OScriptSql
             _login = "";
             _password = "";
             _connectionString = "";
-            
+            _lastErrorMessage = "";
+
+
         }
 
         public override string ToString()
@@ -187,6 +190,19 @@ namespace OScriptSql
             }
         }
 
+        /// <summary>
+        /// Текст последней ошибки
+        /// </summary>
+        /// <value>Строка</value>
+        [ContextProperty("ПоследнееСообщениеОбОшибке", "LastErrorMessage")]
+        public string LastErrorMessage
+        {
+            get
+            {
+                return _lastErrorMessage;
+            }
+        }
+
         public DbConnection Connection
         {
             get
@@ -306,11 +322,12 @@ namespace OScriptSql
             try
             {
                 _connection.Open();
+                _lastErrorMessage = "";
                 return true;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                _lastErrorMessage = e.Message;
                 return false;
             }
         }

@@ -20,7 +20,7 @@ namespace OScriptSql
     /// Предназначен для выполнения запросов к базе данных.
     /// </summary>
     [ContextClass("Запрос", "Query")]
-    class Query : AutoContext<Query>, IOScriptQuery
+    public class Query : AutoContext<Query>, IOScriptQuery
     {
 
         private string _text;
@@ -135,6 +135,16 @@ namespace OScriptSql
 
             result = new QueryResult(reader);
             return result;
+        }
+
+        /// <summary>
+        /// Выполняет запрос к базе данных. Cиноним для Выполнить
+        /// </summary>
+        /// <returns>РезультатЗапроса</returns>
+        [ContextMethod("ВыполнитьЗапрос", "ExecuteQuery")]
+        public IValue ExecuteQuery()
+        {
+            return Execute();
         }
 
         /// <summary>
