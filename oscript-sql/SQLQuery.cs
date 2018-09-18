@@ -221,6 +221,27 @@ namespace OScriptSql
 
         }
 
+        [ContextMethod("ИДПоследнейДобавленнойЗаписи", "LastInsertRowId")]
+        public int LastInsertRowId()
+        {
+            if (_connector.DbType == (new EnumDBType()).sqlite)
+            {
+                return (int)((SQLiteConnection)_connection).LastInsertRowId;
+            }
+            else if (_connector.DbType == (new EnumDBType()).MSSQLServer)
+            {
+                return -1;
+            }
+            else if (_connector.DbType == (new EnumDBType()).MySQL)
+            {
+                return (int)((MySqlCommand)_command).LastInsertedId;
+            }
+            else if (_connector.DbType == (new EnumDBType()).PostgreSQL)
+            {
+                return -1;
+            }
+            return -1;
+        }
 
     }
 }
