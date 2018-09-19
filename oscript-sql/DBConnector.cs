@@ -43,8 +43,7 @@ namespace OScriptSql
             _password = "";
             _connectionString = "";
             _lastErrorMessage = "";
-
-
+            _connection = null;
         }
 
         public override string ToString()
@@ -180,13 +179,48 @@ namespace OScriptSql
         /// <summary>
         /// Статус соединения с БД
         /// </summary>
-        /// <value>ConnectionState</value>
+        /// <value>Булево</value>
         [ContextProperty("Открыто", "IsOpen")]
-        public string IsOpen
+        public bool IsOpen
         {
             get
             {
-                return Connection.State.ToString();
+                if ((_connection == null))
+                {
+                    return false;
+                } 
+
+                switch (_connection.State)
+                {
+                    case ConnectionState.Broken: return false;
+                    case ConnectionState.Closed: return false;
+                    case ConnectionState.Connecting: return false;
+                    default: return true;
+                }
+                   
+            }
+        }
+
+        /// <summary>
+        /// Состояние соединения:
+        ///         
+        /// - Closed - Закрыто.
+        /// - Open - Открыто.
+        /// - Connecting - Соединяется с источником.
+        /// - Executing - Выполняет команду
+        /// - Fetching - Получает данные
+        /// - Broken - Соединение оборвано.
+        /// </summary>
+        [ContextProperty("Состояние", "State")]
+        public string State
+        {
+            get
+            {
+                if ((_connection == null))
+                {
+                    return "Closed";
+                }
+                return _connection.State.ToString();
             }
         }
 
