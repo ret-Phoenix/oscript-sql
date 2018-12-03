@@ -35,6 +35,17 @@ namespace OScriptSql
         }
 
         /// <summary>
+        /// Определяет, есть ли в результате записи 
+        /// </summary>
+        /// <returns>Булево. Истина - нет ни одной записи; Ложь - если есть записи.</returns>
+        [ContextMethod("Пустой", "IsEmpty")]
+        public bool IsEmpty()
+        {
+            return !_reader.HasRows;
+
+        }
+
+        /// <summary>
         /// Создает таблицу значений и копирует в нее все записи набора.
         /// </summary>
         /// <returns>ТаблицаЗначений</returns>
