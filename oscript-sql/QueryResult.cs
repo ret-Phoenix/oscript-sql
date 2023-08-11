@@ -1,15 +1,8 @@
-﻿using System.Globalization;
-using ScriptEngine.Machine.Contexts;
+﻿using ScriptEngine.Machine.Contexts;
 using ScriptEngine.HostedScript.Library.ValueTable;
 using ScriptEngine.Machine;
-using ScriptEngine.HostedScript.Library;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.SQLite;
 using System.Data.Common;
 using ScriptEngine.HostedScript.Library.Binary;
 
@@ -24,11 +17,17 @@ namespace OScriptSql
     {
         private DbDataReader _reader;
 
+        /// <summary>
+        /// Создает новый экземпляр класса РезультатЗапроса.
+        /// </summary>
         public QueryResult()
         {
         }
 
-
+        /// <summary>
+        /// Создает новый экземпляр класса РезультатЗапроса.
+        /// </summary>
+        /// <param name="reader">Чтение</param>
         public QueryResult(DbDataReader reader)
         {
             _reader = reader;

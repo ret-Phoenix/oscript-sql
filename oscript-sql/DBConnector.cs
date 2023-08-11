@@ -1,12 +1,6 @@
 ﻿using ScriptEngine.Machine;
-using ScriptEngine.HostedScript.Library;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.Sql;
 using ScriptEngine.Machine.Contexts;
 using System.Data.SqlClient;
 using System.Data.Common;
@@ -33,6 +27,9 @@ namespace OScriptSql
         private string _connectionString;
         private string _lastErrorMessage;
 
+        /// <summary>
+        /// Создает новый экземпляр класса Соединение
+        /// </summary>
         public DBConnector()
         {
             _dbType = 0;
@@ -46,6 +43,7 @@ namespace OScriptSql
             _connection = null;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return "Соединение";
@@ -237,13 +235,10 @@ namespace OScriptSql
             }
         }
 
-        public DbConnection Connection
-        {
-            get
-            {
-                return _connection;
-            }
-        }
+        /// <summary>
+        /// Соединение с БД
+        /// </summary>
+        public DbConnection Connection => _connection;
 
         /// <summary>
         /// Подготовленная строка соединения. В случае sqlite аналог ИмяБазы
@@ -263,6 +258,10 @@ namespace OScriptSql
             }
         }
 
+        /// <summary>
+        /// Создать объект Соединение
+        /// </summary>
+        /// <returns>Соединение</returns>
         [ScriptConstructor]
         public static IRuntimeContextInstance Constructor()
         {
@@ -276,7 +275,7 @@ namespace OScriptSql
         [ContextMethod("Открыть", "Open")]
         public bool Open()
         {
-            if (DbType == (new EnumDBType()).sqlite)
+            if (DbType == (new EnumDBType()).Sqlite)
             {
                 if (ConnectionString == string.Empty && DbName != string.Empty)
                     ConnectionString = string.Format("Data Source={0};", DbName);
