@@ -78,7 +78,7 @@ namespace OScriptSql
             }
         }
 
-        private void setDbCommandParameters()
+        private void SetDbCommandParameters()
         {
             DbParameter param = null;
 
@@ -111,7 +111,7 @@ namespace OScriptSql
                     param.ParameterName = "@" + paramKey;
                     param.Value = paramVal.AsBoolean();
                 }
-                else if (paramVal.DataType == DataType.Object ^ paramVal.GetType() == typeof(BinaryDataContext))
+                else if (paramVal.DataType == DataType.Object & paramVal.GetType() == typeof(BinaryDataContext))
                 {
                     param = _command.CreateParameter();
                     param.ParameterName = "@" + paramKey;
@@ -133,7 +133,7 @@ namespace OScriptSql
             _command.Parameters.Clear();
             _command.CommandText = _text;
 
-            setDbCommandParameters();
+            SetDbCommandParameters();
             DbDataReader reader = _command.ExecuteReader();
             QueryResult result = new QueryResult(reader);
             return result;
@@ -158,7 +158,7 @@ namespace OScriptSql
         {
             _command.Parameters.Clear();
             _command.CommandText = _text;
-            setDbCommandParameters();
+            SetDbCommandParameters();
             return _command.ExecuteNonQuery();
         }
 
@@ -191,7 +191,7 @@ namespace OScriptSql
 
             if (_connector.DbType == new EnumDBType().Sqlite)
             {
-                _command = new SQLiteCommand((SQLiteConnection)connector.Connection);
+                _command = _connection.CreateCommand();
             }
             else if (_connector.DbType == new EnumDBType().MSSQLServer)
             {
