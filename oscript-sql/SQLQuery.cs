@@ -87,37 +87,32 @@ namespace OScriptSql
                 var paramVal = ((KeyAndValueImpl)prm).Value;
                 var paramKey = ((KeyAndValueImpl)prm).Key.AsString();
 
-                if (paramVal.DataType == DataType.String)
+                param = _command.CreateParameter();
+                param.ParameterName = "@" + paramKey;
+                switch (paramVal.DataType)
                 {
-                    param = _command.CreateParameter();
-                    param.ParameterName = "@" + paramKey;
-                    param.Value = paramVal.AsString();
+                    case DataType.String:
+                        param.Value = paramVal.AsString();
+                        break;
+                    case DataType.Number:
+                        param.Value = paramVal.AsNumber();
+                        break;
+                    case DataType.Date:
+                        param.Value = paramVal.AsDate();
+                        break;
+                    case DataType.Boolean:
+                        param.Value = paramVal.AsBoolean();
+                        break;
+                    case DataType.Object:
+                        if (paramVal.GetType() == typeof(BinaryDataContext))
+                        {
+                            param.Value = (paramVal as BinaryDataContext).Buffer;
+                        }
+                        break;
+                    case DataType.Undefined:
+                        param.Value = null;
+                        break;
                 }
-                else if (paramVal.DataType == DataType.Number)
-                {
-                    param = _command.CreateParameter();
-                    param.ParameterName = "@" + paramKey;
-                    param.Value = paramVal.AsNumber();
-                }
-                else if (paramVal.DataType == DataType.Date)
-                {
-                    param = _command.CreateParameter();
-                    param.ParameterName = "@" + paramKey;
-                    param.Value = paramVal.AsDate();
-                }
-                else if (paramVal.DataType == DataType.Boolean)
-                {
-                    param = _command.CreateParameter();
-                    param.ParameterName = "@" + paramKey;
-                    param.Value = paramVal.AsBoolean();
-                }
-                else if (paramVal.DataType == DataType.Object & paramVal.GetType() == typeof(BinaryDataContext))
-                {
-                    param = _command.CreateParameter();
-                    param.ParameterName = "@" + paramKey;
-                    param.Value = (paramVal as BinaryDataContext).Buffer;
-                }
-
                 _command.Parameters.Add(param);
             }
 
