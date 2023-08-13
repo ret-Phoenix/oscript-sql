@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using MySql.Data.MySqlClient;
 using Npgsql;
 using ScriptEngine.HostedScript.Library.Binary;
+using System;
 
 namespace OScriptSql
 {
@@ -110,7 +111,7 @@ namespace OScriptSql
                         }
                         break;
                     case DataType.Undefined:
-                        param.Value = null;
+                        param.Value = DBNull.Value;
                         break;
                 }
                 _command.Parameters.Add(param);
