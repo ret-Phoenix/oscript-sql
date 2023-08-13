@@ -1,9 +1,4 @@
 ﻿using ScriptEngine.Machine.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OScriptSql
 {
@@ -13,29 +8,29 @@ namespace OScriptSql
     [ContextClass("ТипСУБД", "DBType")]
     public class EnumDBType : AutoContext<EnumDBType>
     {
+        /// <summary>
+        /// Тип базы данных SQLite
+        /// </summary>
         [ContextProperty("sqlite", "sqlite")]
-        public int sqlite
-        {
-            get { return 0; }
-        }
+        public int Sqlite => 0;
 
+        /// <summary>
+        /// Тип базы данных MSSQLServer
+        /// </summary>
         [ContextProperty("MSSQLServer", "MSSQLServer")]
-        public int MSSQLServer
-        {
-            get { return 1; }
-        }
+        public int MSSQLServer => 1;
 
+        /// <summary>
+        /// Тип базы данных MySQL
+        /// </summary>
         [ContextProperty("MySQL", "MySQL")]
-        public int MySQL
-        {
-            get { return 2; }
-        }
+        public int MySQL => 2;
 
+        /// <summary>
+        /// Тип базы данных PostgreSQL
+        /// </summary>
         [ContextProperty("PostgreSQL", "PostgreSQL")]
-        public int PostgreSQL
-        {
-            get { return 3; }
-        }
+        public int PostgreSQL => 3;
 
     }
 }

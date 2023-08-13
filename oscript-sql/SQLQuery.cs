@@ -1,18 +1,13 @@
 ﻿using ScriptEngine.Machine.Contexts;
 using ScriptEngine.Machine;
 using ScriptEngine.HostedScript.Library;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.Data.Common;
-using System.Data.Sql;
 using System.Data.SqlClient;
-using System.Data;
 using MySql.Data.MySqlClient;
 using Npgsql;
+using ScriptEngine.HostedScript.Library.Binary;
+using System;
 
 namespace OScriptSql
 {
@@ -30,24 +25,30 @@ namespace OScriptSql
 
         private DBConnector _connector;
 
+        /// <summary>
+        /// Создает новый экземпляр класса Запрос.
+        /// </summary>
         public Query()
         {
             _parameters = new StructureImpl();
             _text = "";
         }
 
+        /// <summary>
+        /// Создает новый экземпляр класса Запрос.
+        /// </summary>
+        /// <returns>Запрос</returns>
         [ScriptConstructor]
         public static IRuntimeContextInstance Constructor()
         {
             return new Query();
         }
 
-
+        /// <summary>
+        /// Параметры запроса
+        /// </summary>
         [ContextProperty("Параметры", "Parameters")]
-        public StructureImpl Parameters
-        {
-            get { return _parameters; }
-        }
+        public StructureImpl Parameters => _parameters;
 
 
         /// <summary>
@@ -78,7 +79,7 @@ namespace OScriptSql
             }
         }
 
-        private void setDbCommandParameters()
+        private void SetDbCommandParameters()
         {
             DbParameter param = null;
 
@@ -87,31 +88,32 @@ namespace OScriptSql
                 var paramVal = ((KeyAndValueImpl)prm).Value;
                 var paramKey = ((KeyAndValueImpl)prm).Key.AsString();
 
-                if (paramVal.DataType == DataType.String)
+                param = _command.CreateParameter();
+                param.ParameterName = "@" + paramKey;
+                switch (paramVal.DataType)
                 {
-                    param = _command.CreateParameter();
-                    param.ParameterName = "@" + paramKey;
-                    param.Value = paramVal.AsString();
+                    case DataType.String:
+                        param.Value = paramVal.AsString();
+                        break;
+                    case DataType.Number:
+                        param.Value = paramVal.AsNumber();
+                        break;
+                    case DataType.Date:
+                        param.Value = paramVal.AsDate();
+                        break;
+                    case DataType.Boolean:
+                        param.Value = paramVal.AsBoolean();
+                        break;
+                    case DataType.Object:
+                        if (paramVal.GetType() == typeof(BinaryDataContext))
+                        {
+                            param.Value = (paramVal as BinaryDataContext).Buffer;
+                        }
+                        break;
+                    case DataType.Undefined:
+                        param.Value = DBNull.Value;
+                        break;
                 }
-                else if (paramVal.DataType == DataType.Number)
-                {
-                    param = _command.CreateParameter();
-                    param.ParameterName = "@" + paramKey;
-                    param.Value = paramVal.AsNumber();
-                }
-                else if (paramVal.DataType == DataType.Date)
-                {
-                    param = _command.CreateParameter();
-                    param.ParameterName = "@" + paramKey;
-                    param.Value = paramVal.AsDate();
-                }
-                else if (paramVal.DataType == DataType.Boolean)
-                {
-                    param = _command.CreateParameter();
-                    param.ParameterName = "@" + paramKey;
-                    param.Value = paramVal.AsBoolean();
-                }
-
                 _command.Parameters.Add(param);
             }
 
@@ -124,16 +126,12 @@ namespace OScriptSql
         [ContextMethod("Выполнить", "Execute")]
         public IValue Execute()
         {
-            var result = new QueryResult();
-            DbDataReader reader = null;
-
             _command.Parameters.Clear();
             _command.CommandText = _text;
 
-            setDbCommandParameters();
-            reader = _command.ExecuteReader();
-
-            result = new QueryResult(reader);
+            SetDbCommandParameters();
+            DbDataReader reader = _command.ExecuteReader();
+            QueryResult result = new QueryResult(reader);
             return result;
         }
 
@@ -154,21 +152,9 @@ namespace OScriptSql
         [ContextMethod("ВыполнитьКоманду", "ExecuteCommand")]
         public int ExecuteCommand()
         {
-            var sec = new SystemEnvironmentContext();
-            string versionOnescript = sec.Version;
-
-            string[] verInfo = versionOnescript.Split('.');
-
-            //if (Convert.ToInt64(verInfo[2]) >= 15)
-            //{
-            //    Console.WriteLine("> 15");
-            //}
-
-            var result = new QueryResult();
-
             _command.Parameters.Clear();
             _command.CommandText = _text;
-            setDbCommandParameters();
+            SetDbCommandParameters();
             return _command.ExecuteNonQuery();
         }
 
@@ -199,44 +185,54 @@ namespace OScriptSql
             _connector = connector;
             _connection = connector.Connection;
 
-            if (_connector.DbType == (new EnumDBType()).sqlite)
+            if (_connector.DbType == new EnumDBType().Sqlite)
             {
-                _command = new SQLiteCommand((SQLiteConnection)connector.Connection);
+                _command = _connection.CreateCommand();
             }
-            else if (_connector.DbType == (new EnumDBType()).MSSQLServer)
+            else if (_connector.DbType == new EnumDBType().MSSQLServer)
             {
-                _command = new SqlCommand();
-                _command.Connection = (SqlConnection)connector.Connection;
+                _command = new SqlCommand
+                {
+                    Connection = (SqlConnection)connector.Connection
+                };
             }
-            else if (_connector.DbType == (new EnumDBType()).MySQL)
+            else if (_connector.DbType == new EnumDBType().MySQL)
             {
-                _command = new MySqlCommand();
-                _command.Connection = (MySqlConnection)connector.Connection;
+                _command = new MySqlCommand
+                {
+                    Connection = (MySqlConnection)connector.Connection
+                };
             }
-            else if (_connector.DbType == (new EnumDBType()).PostgreSQL)
+            else if (_connector.DbType == new EnumDBType().PostgreSQL)
             {
-                _command = new NpgsqlCommand();
-                _command.Connection = (NpgsqlConnection)connector.Connection;
+                _command = new NpgsqlCommand
+                {
+                    Connection = (NpgsqlConnection)connector.Connection
+                };
             }
 
         }
 
+        /// <summary>
+        /// Возвращает идентификатор последней добавленной записи.
+        /// </summary>
+        /// <returns>Число - идентификатор записи</returns>
         [ContextMethod("ИДПоследнейДобавленнойЗаписи", "LastInsertRowId")]
         public int LastInsertRowId()
         {
-            if (_connector.DbType == (new EnumDBType()).sqlite)
+            if (_connector.DbType == new EnumDBType().Sqlite)
             {
                 return (int)((SQLiteConnection)_connection).LastInsertRowId;
             }
-            else if (_connector.DbType == (new EnumDBType()).MSSQLServer)
+            else if (_connector.DbType == new EnumDBType().MSSQLServer)
             {
                 return -1;
             }
-            else if (_connector.DbType == (new EnumDBType()).MySQL)
+            else if (_connector.DbType == new EnumDBType().MySQL)
             {
                 return (int)((MySqlCommand)_command).LastInsertedId;
             }
-            else if (_connector.DbType == (new EnumDBType()).PostgreSQL)
+            else if (_connector.DbType == new EnumDBType().PostgreSQL)
             {
                 return -1;
             }
